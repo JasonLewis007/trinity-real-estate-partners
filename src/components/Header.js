@@ -1,40 +1,52 @@
-import React from 'react';
-
-// const Header = () => {
-//   return (
-//     <header>
-//       {/* Your header content goes here */}
-//     </header>
-//   );
-// };
+import React, { useState, useEffect } from 'react';
+import './Header.css';
 
 const Header = () => {
-    const [backgroundImage, setBackgroundImage] = useState('city-image.jpg');
-  
-    const handleRotation = () => {
-      // Update the backgroundImage state based on the current image
-      if (backgroundImage === 'city-image.jpg') {
-        setBackgroundImage('country-image.jpg');
-      } else if (backgroundImage === 'country-image.jpg') {
-        setBackgroundImage('mountains-image.jpg');
-      } else {
-        setBackgroundImage('city-image.jpg');
-      }
-    };
-  
-    useEffect(() => {
-      const intervalId = setInterval(handleRotation, 10000); // Adjust the interval value
-      return () => clearInterval(intervalId);
-    }, []); // Empty dependency array to run the effect once
-  
-    return (
-      <div className="header-container">
-        <CityImage image={backgroundImage} />
-        <CountryImage image={backgroundImage} />
-        <MountainsImage image={backgroundImage} />
-      </div>
-    );
+  const [currentImage, setCurrentImage] = useState('city'); // Initial image type
+
+  const images = {
+    city: 'city-image.jpg',
+    country: 'country-image.jpg',
+    mountain: 'mountain-image.jpg',
   };
-  
+
+  useEffect(() => {
+    // Timer to switch images every 5 seconds (adjust as needed)
+    const imageTimer = setInterval(() => {
+      switch (currentImage) {
+        case 'city':
+          setCurrentImage('country');
+          break;
+        case 'country':
+          setCurrentImage('mountain');
+          break;
+        case 'mountain':
+          setCurrentImage('city');
+          break;
+        default:
+          break;
+      }
+    }, 5000);
+
+    // Cleanup the timer on component unmount
+    return () => clearInterval(imageTimer);
+  }, [currentImage]);
+
+  return (
+    <div className="header-container">
+      <div
+        className="Image"
+        style={{
+          backgroundImage: `url(${process.env.PUBLIC_URL}/${images[currentImage]})`,
+          backgroundSize: 'cover',
+          animation: 'fade 1s ease-in-out',
+        }}
+      ></div>
+      {/* Rest of your component */}
+    </div>
+  );
+};
 
 export default Header;
+
+
